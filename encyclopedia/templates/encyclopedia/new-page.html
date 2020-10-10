@@ -7,6 +7,12 @@
 {% block body %}
     <h1>Create New Page</h1>
 
+    {% if error != "" and error != None %}
+      <div class="alert alert-warning" role="alert">
+        {{ error }}
+      </div>
+    {% endif %}
+
     <form action="{% url 'encyclopedia:new-page' %}" method="post">
       {% csrf_token %}
       <label for="{{ form.title.id_for_label }}" class="label">{{ form.title.label }}</label>

@@ -56,18 +56,26 @@ def new_page(request):
     if request.method == "POST":
         form = NewPageForm(request.POST)
 
+        error = ""
+
         if form.is_valid():
             title = form.cleaned_data["title"]
             md_text = form.cleaned_data["md_text"]
 
-            util.save_entry(title, md_text)
+            if util.get_entry(title) is None:
 
-            return HttpResponseRedirect(reverse("encyclopedia:index"))
+                util.save_entry(title, md_text)
 
-        else:
-            return render(request, "encyclopedia/new-page.html", {
-                "form": form
-            })
+                return HttpResponseRedirect(reverse("encyclopedia:entry", args=[title]))
+
+            else:
+
+                error = "An entry with that title already exists."
+
+        return render(request, "encyclopedia/new-page.html", {
+            "form": form,
+            "error": error
+        })
 
     else:
         return render(request, "encyclopedia/new-page.html", {
